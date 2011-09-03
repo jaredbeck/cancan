@@ -265,6 +265,35 @@ describe CanCan::Ability do
     @ability.can?(:read, Range).should be_false
   end
 
+
+  it "the use case we want" do
+    class Ticket; end
+    @ability.can :read, Ticket, { :user_id => 1 }
+    @ability.can?(:read, Ticket, :without_limitations => true).should be_false
+  end
+  
+  it "case 1" do
+    class A; end
+    @ability.can :read, A, { :cointoss => rand > 0.5 }
+    @ability.can?(:read, A, :without_limitations => true).should be_false
+    @ability.can?(:read, A, :without_limitations => false).should be_true
+  end
+
+  it "case 2" do
+    class A; end
+    @ability.can :read, A
+    @ability.cannot :read, A, { :cointoss => rand > 0.5 }
+    @ability.can?(:read, A, :without_limitations => true).should be_false
+    @ability.can?(:read, A, :without_limitations => false).should be_true
+  end
+
+  it "case 3" do
+    class A; end
+    @ability.can :read, A
+    @ability.can?(:read, A, :without_limitations => true).should be_true
+    @ability.can?(:read, A, :without_limitations => false).should be_false
+  end
+
   it "should allow to check ability for Module" do
     module B; end
     class A; include B; end
