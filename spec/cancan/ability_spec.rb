@@ -291,7 +291,7 @@ describe CanCan::Ability do
     class A; end
     @ability.can :read, A
     @ability.can?(:read, A, :without_limitations => true).should be_true
-    @ability.can?(:read, A, :without_limitations => false).should be_false
+    @ability.can?(:read, A, :without_limitations => false).should be_true
   end
 
   it "should allow to check ability for Module" do

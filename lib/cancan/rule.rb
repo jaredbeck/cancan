@@ -36,6 +36,8 @@ module CanCan
         nested_subject_matches_conditions?(subject)
       elsif @conditions.kind_of?(Hash) && !subject_class?(subject)
         matches_conditions_hash?(subject)
+      elsif subject_class?(subject) && extra_args.length == 1 && extra_args[0][:without_limitations].present?
+        !(@base_behavior && has_limitations?)
       else
         # Don't stop at "cannot" definitions when there are conditions.
         @conditions.empty? ? true : @base_behavior
@@ -52,6 +54,10 @@ module CanCan
 
     def conditions_empty?
       @conditions == {} || @conditions.nil?
+    end
+
+    def has_limitations?
+      @block.present? || !conditions_empty?
     end
 
     def associations_hash(conditions = @conditions)
