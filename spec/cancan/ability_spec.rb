@@ -400,6 +400,17 @@ describe CanCan::Ability do
     }.should raise_error(CanCan::Error, "You are not able to supply a block with a hash of conditions in read Array ability. Use either one.")
   end
 
+  it "supports nested resources with inheritance" do
+    class Comment; end
+    class Page; def user_id() 2 end end
+    class BlogPost < Page; end
+    @ability.can :read, Comment, :page => {:user_id => 1}
+    page = Page.new
+    @ability.cannot?(:read, page => Comment).should == true
+    blog_post = BlogPost.new
+    @ability.cannot?(:read, blog_post => Comment).should == true
+  end
+
   describe "unauthorized message" do
     after(:each) do
       I18n.backend = nil
